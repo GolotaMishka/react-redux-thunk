@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { connect } from 'react-redux';
+import {ADD_TODO} from './data/constants'
+import {createTodo} from './data/actions';
 
-function App() {
-  return (
-    <div className="App">
+class App extends React.Component {
+
+  render(){
+    const {isCreationLoading, list, addTodo} = this.props;
+    if(isCreationLoading) return <p>Todo is creating</p>
+    return (
+      <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Todos
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        
+        <button onClick={()=> this.props.addTodo({title: "Test", description: "test description"})}>Add</button>
+        {list.map((todo, index)=>(
+          <p key={Number(index)}>{todo.title}</p>
+        ))}
       </header>
     </div>
-  );
+    )
+  }
 }
 
-export default App;
+export default connect(
+  state => ({
+    isCreationLoading: state.todos.isCreationLoading,
+    error: state.todos.error,
+    list: state.todos.list,
+  }),
+  dispatch => ({
+    // addTodo: newTodo=> dispatch({type: ADD_TODO, payload: newTodo}),
+    addTodo: newTodo=> dispatch(createTodo(newTodo)),
+
+  })
+
+)(App);
